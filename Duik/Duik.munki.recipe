@@ -28,6 +28,8 @@
                 <string>%pkg_path%</string>
                 <key>repo_subdirectory</key>
                 <string>%MUNKI_REPO_SUBDIR%</string>
+                <key>pkginfo_update</key>
+                <true/>
                 <key>pkginfo</key>
                 <dict>
                     <key>name</key>
