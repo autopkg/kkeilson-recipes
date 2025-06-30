@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0">
+<dict>
+    <key>Identifier</key>
+    <string>com.github.kkeilson.munki.duik</string>
+
+    <key>ParentRecipe</key>
+    <string>com.github.kkeilson.pkg.duik</string>
+
+    <key>Input</key>
+    <dict>
+        <key>NAME</key>
+        <string>Duik</string>
+        <key>MUNKI_REPO_SUBDIR</key>
+        <string>plugins/Duik</string>
+    </dict>
+
+    <key>Process</key>
+    <array>
+        <dict>
+            <key>Processor</key>
+            <string>MunkiImporter</string>
+            <key>Arguments</key>
+            <dict>
+                <key>pkg_path</key>
+                <string>%RECIPE_CACHE_DIR%/%NAME%-%version%.pkg</string>
+                <key>repo_subdirectory</key>
+                <string>%MUNKI_REPO_SUBDIR%</string>
+                <key>pkginfo_update</key>
+                <true/>
+                <key>pkginfo</key>
+                <dict>
+                    <key>name</key>
+                    <string>duik</string>
+                    <key>display_name</key>
+                    <string>Duik Angela</string>
+                    <key>description</key>
+                    <string>Duik Angela is a rigging and animation toolset for Adobe After Effects.</string>
+                    <key>version</key>
+                    <string>%version%</string>
+                    <key>category</key>
+                    <string>Graphics</string>
+                    <key>developer</key>
+                    <string>RxLaboratory</string>
+                    <key>catalogs</key>
+                    <array>
+                        <string>testing</string>
+                    </array>
+                    <key>unattended_install</key>
+                    <true/>
+                    <key>unattended_uninstall</key>
+                    <false/>
+                </dict>
+            </dict>
+        </dict>
+    </array>
+</dict>
+</plist>
