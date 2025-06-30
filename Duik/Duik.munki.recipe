@@ -14,7 +14,7 @@
         <key>NAME</key>
         <string>Duik</string>
         <key>MUNKI_REPO_SUBDIR</key>
-		<string>plugins/Duik</string>
+		    <string>plugins/Duik</string>
     </dict>
 
     <key>Process</key>
@@ -44,6 +44,10 @@
                     <string>Graphics</string>
                     <key>developer</key>
                     <string>RxLaboratory</string>
+                    <key>catalogs</key>
+                    <array>
+                        <string>testing</string>
+                    </array>
                     <key>unattended_install</key>
                     <true/>
                     <key>unattended_uninstall</key>
@@ -54,4 +58,3 @@
     </array>
 </dict>
 </plist>
-
