@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0">
+<dict>
+    <key>Identifier</key>
+    <string>com.github.kkeilson.pkg.duik</string>
+
+    <key>ParentRecipe</key>
+    <string>com.github.kkeilson.download.duik</string>
+
+    <key>Input</key>
+    <dict>
+        <key>name</key>
+        <string>Duik</string>
+    </dict>
+
+    <key>Process</key>
+    <array>
+        <dict>
+            <key>Processor</key>
+            <string>PkgCreator</string>
+            <key>Arguments</key>
+            <dict>
+                <key>pkg_request</key>
+                <dict>
+                    <key>pkgname</key>
+                    <string>%NAME%</string>
+                    <key>version</key>
+                    <string>%version%</string>
+                    <key>id</key>
+                    <string>com.kkeilson.duik</string>
+                    <key>install_location</key>
+                    <string>/Library/Application Support/Adobe/CEP/extensions/</string>
+                    <key>pkgroot</key>
+                    <string>%RECIPE_CACHE_DIR%/%NAME%</string>
+                </dict>
+            </dict>
+        </dict>
+    </array>
+</dict>
+</plist>
