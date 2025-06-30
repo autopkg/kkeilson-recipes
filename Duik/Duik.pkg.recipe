@@ -9,7 +9,7 @@
 
     <key>Input</key>
     <dict>
-        <key>NAME</key>
+        <key>name</key>
         <string>Duik</string>
     </dict>
 
@@ -33,8 +33,6 @@
                     <key>pkgroot</key>
                     <string>%RECIPE_CACHE_DIR%/%NAME%</string>
                 </dict>
-                <key>package_path</key>
-                <string>%RECIPE_CACHE_DIR%/%NAME%-%version%.pkg</string>
             </dict>
         </dict>
     </array>
