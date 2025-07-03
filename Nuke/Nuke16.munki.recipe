@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Description</key>
+    <string>Downloads The Foundry Nuke, creates a package, and imports it into Munki.
+
+This recipe uses the Nuke16.pkg recipe as a parent to create the package, then imports it into your Munki repository.
+
+You can override VERSION and ARCHITECTURE variables as needed.
+You can also override Munki-specific variables like MUNKI_REPO_SUBDIR and pkginfo values.</string>
+    <key>Identifier</key>
+    <string>com.github.kkeilson.munki.nuke</string>
+    <key>Input</key>
+    <dict>
+        <key>NAME</key>
+        <string>Nuke</string>
+        <key>MUNKI_REPO_SUBDIR</key>
+        <string>apps/foundry</string>
+        <key>pkginfo</key>
+        <dict>
+            <key>catalogs</key>
+            <array>
+                <string>testing</string>
+            </array>
+            <key>description</key>
+            <string>Nuke is a powerful node-based compositor that delivers unparalleled speed, an efficient multi-channel scanline rendering engine, and a first-class feature set for visual effects artists, digital compositors, and finishers.</string>
+            <key>developer</key>
+            <string>The Foundry</string>
+            <key>display_name</key>
+            <string>Nuke</string>
+            <key>name</key>
+            <string>%NAME%</string>
+            <key>unattended_install</key>
+            <true/>
+            <key>unattended_uninstall</key>
+            <true/>
+            <key>category</key>
+            <string>Video</string>
+            <key>minimum_os_version</key>
+            <string>10.15</string>
+        </dict>
+    </dict>
+    <key>MinimumVersion</key>
+    <string>2.3</string>
+    <key>ParentRecipe</key>
+    <string>com.github.kkeilson.pkg.nuke</string>
+    <key>Process</key>
+    <array>
+        <dict>
+            <key>Arguments</key>
+            <dict>
+                <key>pkg_path</key>
+                <string>%pkg_path%</string>
+                <key>repo_subdirectory</key>
+                <string>%MUNKI_REPO_SUBDIR%</string>
+            </dict>
+            <key>Processor</key>
+            <string>MunkiImporter</string>
+        </dict>
+    </array>
+</dict>
+</plist>

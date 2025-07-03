@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Description</key>
+    <string>Download recipe for The Foundry - Nuke. Downloads a Nuke disk image from The Foundry's S3 bucket.
+
+This recipe downloads a specific version of Nuke for Apple Silicon Macs. To use a different version, override the VERSION input variable.
+
+VERSION should be in the format like "16.0v4" for version 16.0 update 4.
+ARCHITECTURE can be "mac-arm64" for Apple Silicon or "mac-x86-64" for Intel Macs.
+
+Example override for different version:
+autopkg run --key VERSION=15.1v3 Nuke.download
+    </string>
+    <key>Identifier</key>
+    <string>com.github.kkeilson.download.nuke</string>
+    <key>Input</key>
+    <dict>
+        <key>NAME</key>
+        <string>Nuke</string>
+        <key>VERSION</key>
+        <string>16.0v4</string>
+        <key>ARCHITECTURE</key>
+        <string>mac-arm64</string>
+        <key>DOWNLOAD_URL</key>
+        <string>https://thefoundry.s3.amazonaws.com/products/nuke/releases/%VERSION%/Nuke%VERSION%-%ARCHITECTURE%.dmg</string>
+        <key>DISABLE_CODE_SIGNATURE_VERIFICATION</key>
+        <true/>
+    </dict>
+    <key>MinimumVersion</key>
+    <string>2.3</string>
+    <key>Process</key>
+    <array>
+        <dict>
+            <key>Arguments</key>
+            <dict>
+                <key>url</key>
+                <string>%DOWNLOAD_URL%</string>
+                <key>filename</key>
+                <string>%NAME%-%VERSION%-%ARCHITECTURE%.dmg</string>
+            </dict>
+            <key>Processor</key>
+            <string>URLDownloader</string>
+        </dict>
+        <dict>
+            <key>Processor</key>
+            <string>EndOfCheckPhase</string>
+        </dict>
+        <dict>
+            <key>Arguments</key>
+            <dict>
+                <key>input_path</key>
+                <string>%pathname%/*/Nuke16.0v4.app</string>
+                <key>requirement</key>
+                <string>identifier "uk.co.thefoundry.nuke" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = P2OL8VJ85N</string>
+            </dict>
+            <key>Processor</key>
+            <string>CodeSignatureVerifier</string>
+        </dict>
+    </array>
+</dict>
+</plist>
