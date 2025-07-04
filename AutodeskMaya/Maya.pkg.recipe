@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Description</key>
+	<string>Downloads and packages Maya with network licensing configuration</string>
+	<key>Identifier</key>
+	<string>com.github.kkeilson.pkg.Maya</string>
+	<key>Input</key>
+	<dict>
+		<key>NAME</key>
+		<string>Maya</string>
+		<key>VERSION_YEAR</key>
+		<string></string>
+		<key>PRODUCT_KEY</key>
+		<string></string>
+		<key>NETWORK_SERVERS</key>
+		<string></string>
+	</dict>
+	<key>ParentRecipe</key>
+	<string>com.github.moofit-recipes.download.Maya</string>
+	<key>Process</key>
+	<array>
+		<dict>
+			<key>Processor</key>
+			<string>PkgRootCreator</string>
+			<key>Arguments</key>
+			<dict>
+				<key>pkgroot</key>
+				<string>%RECIPE_CACHE_DIR%/payload</string>
+				<key>pkgdirs</key>
+				<dict>
+					<key>root/private/tmp</key>
+					<string>0777</string>
+					<key>scripts</key>
+					<string>0755</string>
+				</dict>
+			</dict>
+		</dict>
+		<dict>
+			<key>Processor</key>
+			<string>Copier</string>
+			<key>Arguments</key>
+			<dict>
+				<key>source_path</key>
+				<string>%found_filename%/*.app</string>
+				<key>destination_path</key>
+				<string>%pkgroot%/root/private/tmp/%NAME%.app</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>Processor</key>
+			<string>FileCreator</string>
+			<key>Comment</key>
+			<string>Create network licensing postinstall script</string>
+			<key>Arguments</key>
+			<dict>
+				<key>file_path</key>
+				<string>%RECIPE_CACHE_DIR%/payload/scripts/postinstall</string>
+				<key>file_content</key>
+				<string>#!/bin/bash
+
+#Installs Maya %VERSION_YEAR% and registers network licensing version.
+#Configure variables in recipe override for your environment
+
+#Set variables
+year="%VERSION_YEAR%"
+pkgPath1="/tmp/Install Maya %VERSION_YEAR%.app/Contents/Helper/Packages/Maya/MayaUSD.pkg"
+pkgPath2="/tmp/Install Maya %VERSION_YEAR%.app/Contents/Helper/Packages/Maya/Maya_AdLMconf%VERSION_YEAR%.pkg"
+pkgPath4a="/tmp/Install Maya %VERSION_YEAR%.app/Contents/Helper/Packages/Licensing/adskflexnetserverIPV6.pkg"
+pkgPath5="/tmp/Install Maya %VERSION_YEAR%.app/Contents/Helper/Packages/Licensing/AdskLicensing-14.0.1.10167-mac-installer.pkg"
+pkgPath6="/tmp/Install Maya %VERSION_YEAR%.app/Contents/Helper/Packages/Maya/Maya_core%VERSION_YEAR%.pkg"
+pkgPath7="/tmp/Install Maya %VERSION_YEAR%.app/Contents/Helper/Packages/Maya/bifrost.pkg"
+pkgPath8="/tmp/Install Maya %VERSION_YEAR%.app/Contents/Helper/Packages/Maya/MtoA.pkg"
+pkgPath10="/tmp/Install Maya %VERSION_YEAR%.app/Contents/Helper/Packages/Maya/LookdevX.pkg"
+
+pKey="%PRODUCT_KEY%"
+licPath="/Library/Application Support/Autodesk/AdskLicensingService/${pKey}_${year}.0.0.F"
+licFile="LICPATH.lic"
+lgsFile="LGS.data"
+
+#Network servers
+networkServer="%NETWORK_SERVERS%"
+
+#Functions
+writelog()
+{
+    # Write to system log
+    /usr/bin/logger -is -t "Maya Install" "${1}"
+}
+
+runInstaller ()
+{
+    writelog "Installing Maya %VERSION_YEAR% packages..."
+    
+    # Install packages if they exist
+    for pkg in "$pkgPath1" "$pkgPath2" "$pkgPath4a" "$pkgPath5" "$pkgPath6" "$pkgPath7" "$pkgPath8" "$pkgPath10"; do
+        if [[ -f "$pkg" ]]; then
+            writelog "Installing $(basename "$pkg")..."
+            if ! /usr/sbin/installer -verboseR -pkg "$pkg" -target /; then
+                writelog "Failed to install $(basename "$pkg")"
+                exit 1
+            fi
+        else
+            writelog "Package not found: $(basename "$pkg")"
+        fi
+    done
+}
+
+createLicenseFiles ()
+{
+    writelog "Creating license files for network licensing..."
+    
+    if [ ! -e "${licPath}" ]; then
+        /bin/mkdir -p "${licPath}"
+    fi
+    
+    /usr/bin/touch "${licPath}/${lgsFile}"
+    /bin/chmod 777 "${licPath}/${lgsFile}"
+    /usr/bin/touch "${licPath}/${licFile}"
+    /bin/chmod 777 "${licPath}/${licFile}"
+    /bin/echo "SERVER ${networkServer} 000000000000" > "${licPath}/${licFile}"
+    /bin/echo "USE_SERVER" >> "${licPath}/${licFile}"
+    /bin/echo "_NETWORK" >> "${licPath}/${lgsFile}"
+    
+    writelog "License files created successfully"
+}
+
+licenseHelper ()
+{
+    writelog "Registering Maya with network licensing..."
+    
+    if ! /Library/Application\ Support/Autodesk/AdskLicensing/Current/helper/AdskLicensingInstHelper register --pk ${pKey} --pv ${year}.0.0.F --lm NETWORK --lt REDUNDANT --ls "${networkServer}" --cf /Applications/Autodesk/maya%VERSION_YEAR%/adlmreg/MayaConfig.pit --nu; then
+        writelog "Failed to register Maya licensing"
+        exit 1
+    fi
+    
+    writelog "Maya licensing registration successful"
+}
+
+cleanUp ()
+{
+    writelog "Cleaning up installation files..."
+    /bin/rm -rf /tmp/Install\ Maya\ %VERSION_YEAR%.app
+}
+
+# Main execution
+writelog "Starting Maya %VERSION_YEAR% installation..."
+
+runInstaller
+createLicenseFiles
+licenseHelper
+cleanUp
+
+writelog "Maya %VERSION_YEAR% installation completed successfully"</string>
+				<key>file_mode</key>
+				<string>0755</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>Processor</key>
+			<string>PkgCreator</string>
+			<key>Arguments</key>
+			<dict>
+				<key>pkg_request</key>
+				<dict>
+					<key>pkgname</key>
+					<string>%NAME%-%VERSION_YEAR%</string>
+					<key>id</key>
+					<string>com.autodesk.Maya%VERSION_YEAR%</string>
+					<key>options</key>
+					<string>purge_ds_store</string>
+					<key>pkgroot</key>
+					<string>%RECIPE_CACHE_DIR%/payload/root</string>
+					<key>scripts</key>
+					<string>%RECIPE_CACHE_DIR%/payload/scripts</string>
+					<key>version</key>
+					<string>%VERSION_YEAR%</string>
+				</dict>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>
